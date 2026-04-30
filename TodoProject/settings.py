@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "todoapp.apps.TodoappConfig",
     'crispy_forms',
-     'crispy_bootstrap4',
+    'crispy_bootstrap4',
 ]
 
 # Crispy Forms Settings

@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-89blyhl024ktu77f*5nw(!(8yd%9fqz%@rwq&qgwfrzt=v7e#9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://todosys-1.onrender.com','todosys-1.onrender.com']
+ALLOWED_HOSTS = ['https://todosys-1.onrender.com','todosys-1.onrender.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -49,6 +49,9 @@ INSTALLED_APPS = [
 # Crispy Forms Settings
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -85,7 +88,10 @@ WSGI_APPLICATION = 'TodoProject.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.parse(config('DATABASE_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 

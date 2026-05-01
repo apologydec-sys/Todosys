@@ -7,6 +7,11 @@ from .models import Task
 from .forms import TaskForm, UpdateTodoForm
 
 # Create your views here.
+def home(request):
+    if request.user.is_authenticated:
+        return redirect('todo-index')
+    return render(request, 'todo/home.html')
+
 @login_required
 def index(request):
     todos = Task.objects.filter(user=request.user)
@@ -24,7 +29,7 @@ def index(request):
             task = form.save(commit=False)
             task.user = request.user
             task.save()
-            return redirect('/')
+            return redirect('todo-index')
     else:
         form = TaskForm()
     
@@ -46,7 +51,7 @@ def update(request, pk):
         form = UpdateTodoForm(request.POST, instance=todo)
         if form.is_valid():
             form.save()
-            return redirect('/')
+            return redirect('todo-index')
         
     else:
         form = UpdateTodoForm(instance=todo)
@@ -64,7 +69,7 @@ def delete(request, pk):
     todo = Task.objects.get(id=pk, user=request.user)
     if request.method=="POST":
         todo.delete()
-        return redirect('/')
+        return redirect('todo-index')
     return render(request, 'todo/delete.html')
 
 
@@ -74,7 +79,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('/')
+            return redirect('todo-index')
     else:
         form = UserCreationForm()
     return render(request, 'todo/register.html', {'form': form})
@@ -86,7 +91,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('/')
+            return redirect('todo-index')
     else:
         form = AuthenticationForm()
     return render(request, 'todo/login.html', {'form': form})
@@ -94,4 +99,4 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('home')

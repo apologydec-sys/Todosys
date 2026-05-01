@@ -1,47 +1,63 @@
  {% extends "partials/base.html" %}
- {% block title %}Todo App{% endblock %}
+ {% block title %}My Todos - TodosApp{% endblock %}
 {% load crispy_forms_tags %}
     {% block content %}
-     <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-8 mx-auto">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="card-title">My Todo List</h3>
-                        <p>Welcome, {{ user.username }}! <a href="{% url 'logout' %}" class="btn btn-light btn-sm">Logout</a></p>
+     <div class="container-fluid mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10 col-sm-12">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h3 class="card-title mb-0">My Todo List</h3>
+                        <p class="mb-0">Welcome, {{ user.username }}! <a href="{% url 'logout' %}" class="btn btn-light btn-sm ml-2">Logout</a></p>
                     </div>
                     <div class="card-body">
-                        <form method="POST">
+                        <form method="POST" class="mb-4">
                           {% csrf_token %}
                           {{ form|crispy }}
-                            <input class="btn btn-success btn-block" type="submit" value="Add Task" >
+                            <button class="btn btn-success btn-block" type="submit">Add Task</button>
                         </form>
                         <hr>
-                        <div class="row mb-3">
-                            <div class="col">Total Tasks: {{ count_todos }}</div>
-                            <div class="col">Completed: {{ count_completed_todos }}</div>
-                            <div class="col">Pending: {{ count_uncompleted_todos }}</div>
-                        </div>
-                        {% for todo in todos %}
-                        <div class="border p-3 mb-3 shadow-sm rounded">
-                            <small class="text-muted">Created: {{ todo.date|date:"M d, Y H:i" }}</small>
-                            <div class="row">
-                                <div class="col-md-8">
-                                {% if todo.complete == True %}
-                                    <p><span class="badge badge-success"><i class="fas fa-check-circle"></i> Completed</span> <del>{{ todo.content }}</del></p>
-                                    <small>Due: {{ todo.due_date }} at {{ todo.due_time }}</small>
-                                {% else %}
-                                <p>{{ todo.content }}</p>
-                                <small>Due: {{ todo.due_date }} at {{ todo.due_time }}</small>
-                                {% endif %}    
+                        <div class="row mb-3 text-center">
+                            <div class="col-sm-4">
+                                <div class="bg-light p-2 rounded">
+                                    <strong>Total Tasks: {{ count_todos }}</strong>
                                 </div>
-                                <div class="col-md-4 text-right">
-                                    <a class="btn btn-info btn-sm" href="{% url 'todo-update' todo.id %}">Edit</a>
-                                    <a class="btn btn-danger btn-sm" href="{% url 'todo-delete' todo.id %}">Delete</a>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="bg-success text-white p-2 rounded">
+                                    <strong>Completed: {{ count_completed_todos }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="bg-warning p-2 rounded">
+                                    <strong>Pending: {{ count_uncompleted_todos }}</strong>
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
+                        <div class="row">
+                            {% for todo in todos %}
+                            <div class="col-md-6 col-sm-12 mb-3">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <small class="text-muted">Created: {{ todo.date|date:"M d, Y H:i" }}</small>
+                                        <h5 class="{% if todo.complete %}text-decoration-line-through text-muted{% endif %}">{{ todo.content }}</h5>
+                                        {% if todo.due_date %}
+                                        <p class="mb-2"><i class="fas fa-calendar-alt"></i> Due: {{ todo.due_date }} at {{ todo.due_time }}</p>
+                                        {% endif %}
+                                        <div class="d-flex justify-content-between">
+                                            <a class="btn btn-info btn-sm" href="{% url 'todo-update' todo.id %}">Edit</a>
+                                            <a class="btn btn-danger btn-sm" href="{% url 'todo-delete' todo.id %}">Delete</a>
+                                            {% if todo.complete %}
+                                            <span class="badge badge-success">Completed</span>
+                                            {% else %}
+                                            <span class="badge badge-warning">Pending</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>

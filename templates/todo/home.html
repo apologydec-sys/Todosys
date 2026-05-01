@@ -1,0 +1,174 @@
+{% extends "partials/base.html" %}
+{% block title %}Welcome to TodosApp{% endblock %}
+{% load static %}
+{% block content %}
+<style>
+    nav.navbar {
+        background: rgba(0,0,0,0.1) !important;
+        backdrop-filter: blur(10px);
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .hero-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        padding-top: 80px; /* Account for fixed nav */
+    }
+    .hero-title {
+        font-size: 4rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        animation: fadeInUp 1s ease-out;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .hero-subtitle {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        animation: fadeInUp 1.2s ease-out;
+        opacity: 0.9;
+    }
+    .btn-custom {
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        border-radius: 50px;
+        margin: 0 10px;
+        transition: all 0.3s ease;
+        border: none;
+        text-transform: uppercase;
+        font-weight: bold;
+        animation: fadeInUp 1.5s ease-out;
+    }
+    .btn-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .btn-primary-custom {
+        background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    }
+    .btn-secondary-custom {
+        background: linear-gradient(45deg, #4ecdc4, #44a08d);
+    }
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .floating-shapes {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+    }
+    .shape {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.1);
+        animation: float 6s ease-in-out infinite;
+    }
+    .shape:nth-child(1) {
+        width: 80px;
+        height: 80px;
+        top: 10%;
+        left: 10%;
+        animation-delay: 0s;
+    }
+    .shape:nth-child(2) {
+        width: 60px;
+        height: 60px;
+        top: 20%;
+        right: 10%;
+        animation-delay: 2s;
+    }
+    .shape:nth-child(3) {
+        width: 100px;
+        height: 100px;
+        bottom: 20%;
+        left: 20%;
+        animation-delay: 4s;
+    }
+    .shape:nth-child(4) {
+        width: 70px;
+        height: 70px;
+        bottom: 10%;
+        right: 20%;
+        animation-delay: 1s;
+    }
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        .hero-subtitle {
+            font-size: 1.2rem;
+        }
+        .btn-custom {
+            padding: 12px 24px;
+            font-size: 1rem;
+            margin: 5px;
+            display: block;
+            width: 200px;
+            margin: 10px auto;
+        }
+    }
+</style>
+
+<div class="hero-section">
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <div class="container">
+        <h1 class="hero-title">Welcome to TodosApp</h1>
+        <p class="hero-subtitle">Organize your tasks efficiently with our modern todo application</p>
+        <div>
+            <a href="{% url 'register' %}" class="btn btn-custom btn-primary-custom">Get Started</a>
+            <a href="{% url 'login' %}" class="btn btn-custom btn-secondary-custom">Login</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add some interactive effects
+    document.addEventListener('DOMContentLoaded', function() {
+        const shapes = document.querySelectorAll('.shape');
+        shapes.forEach(shape => {
+            shape.addEventListener('mouseover', function() {
+                this.style.transform = 'scale(1.2)';
+            });
+            shape.addEventListener('mouseout', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    });
+</script>
+{% endblock %}

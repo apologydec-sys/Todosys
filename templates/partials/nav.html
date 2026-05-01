@@ -1,32 +1,27 @@
-<nav class="navbar navbar-expand-lg navbar-info bg-info">
+<nav class="navbar navbar-expand-lg navbar-dark bg-transparent">
     <div class="container">
-  <a class="navbar-brand text-white" href="{% if user.is_authenticated %}#{% else %}{% url 'login' %}{% endif %}">Todo App</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      {% if user.is_authenticated %}
-      <li class="nav-item active">
-        <a class="nav-link text-white" href="{% url 'todo-index' %}">Home <span class="sr-only">(current)</span></a>
-      </li>
-      {% endif %}
-    </ul>
-    <ul class="navbar-nav ml-auto">
-      {% if user.is_authenticated %}
-      <li class="nav-item">
-        <a class="nav-link text-white" href="{% url 'logout' %}">Logout</a>
-      </li>
-      {% else %}
-      <li class="nav-item">
-        <a class="nav-link text-white" href="{% url 'login' %}">Login</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white" href="{% url 'register' %}">Register</a>
-      </li>
-      {% endif %}
-    </ul>
-  </div>
-  </div>
+        <a class="navbar-brand text-white font-weight-bold" href="{% if user.is_authenticated %}#{% else %}{% url 'home' %}{% endif %}">TodosApp</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'todo-index' %}">My Todos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'logout' %}">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'register' %}">Register</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
 </nav>

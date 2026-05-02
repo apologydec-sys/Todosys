@@ -10,5 +10,9 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('api/reminders/', views.reminders_api, name='reminders-api'),
+    # PWA
+    path('manifest.json', views.manifest, name='pwa-manifest'),
+    path('sw.js', views.service_worker, name='pwa-sw'),
+    path('offline/', views.offline, name='pwa-offline'),
 ]
 

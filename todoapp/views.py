@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.template.loader import render_to_string
 from .models import Task
 from .forms import TaskForm, UpdateTodoForm
 
@@ -125,3 +126,22 @@ def reminders_api(request):
         task.save(update_fields=['last_reminded_at'])
 
     return JsonResponse({'reminders': data})
+
+
+# ── PWA Views ────────────────────────────────────────────────────────────────
+
+def manifest(request):
+    """Serve the Web App Manifest with correct content-type."""
+    content = render_to_string('pwa/manifest.json', request=request)
+    return HttpResponse(content, content_type='application/manifest+json')
+
+
+def service_worker(request):
+    """Serve the service worker JS from root scope."""
+    content = render_to_string('pwa/sw.js', request=request)
+    return HttpResponse(content, content_type='application/javascript')
+
+
+def offline(request):
+    """Offline fallback page shown by the service worker."""
+    return render(request, 'pwa/offline.html')

@@ -1,28 +1,29 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from .models import Task
 from .forms import TaskForm, UpdateTodoForm
 
-# Create your views here.
+
 def home(request):
     if request.user.is_authenticated:
         return redirect('todo-index')
     return render(request, 'todo/home.html')
 
+
 @login_required
 def index(request):
     todos = Task.objects.filter(user=request.user)
     count_todos = todos.count()
-    
+
     completed_todos = todos.filter(complete=True)
     count_completed_todos = completed_todos.count()
-    
+
     count_uncompleted_todos = count_todos - count_completed_todos
-    
-    
+
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
@@ -32,45 +33,43 @@ def index(request):
             return redirect('todo-index')
     else:
         form = TaskForm()
-    
+
     context = {
         'todos': todos,
         'form': form,
         'count_todos': count_todos,
         'count_completed_todos': count_completed_todos,
-        'count_uncompleted_todos': count_uncompleted_todos, 
+        'count_uncompleted_todos': count_uncompleted_todos,
     }
     return render(request, 'todo/index.html', context)
 
 
-
+@login_required
 def update(request, pk):
-    todo = Task.objects.get(id=pk, user=request.user)
-    
+    todo = get_object_or_404(Task, id=pk, user=request.user)
+
     if request.method == 'POST':
         form = UpdateTodoForm(request.POST, instance=todo)
         if form.is_valid():
             form.save()
             return redirect('todo-index')
-        
     else:
         form = UpdateTodoForm(instance=todo)
-    
-    
-    context = { 
-        'form': form
+
+    context = {
+        'form': form,
+        'todo': todo,
     }
     return render(request, 'todo/update.html', context)
 
 
-
-
+@login_required
 def delete(request, pk):
-    todo = Task.objects.get(id=pk, user=request.user)
-    if request.method=="POST":
+    todo = get_object_or_404(Task, id=pk, user=request.user)
+    if request.method == 'POST':
         todo.delete()
         return redirect('todo-index')
-    return render(request, 'todo/delete.html')
+    return render(request, 'todo/delete.html', {'todo': todo})
 
 
 def register(request):
@@ -100,3 +99,29 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+
+@login_required
+def reminders_api(request):
+    """
+    Returns incomplete tasks that need a reminder (6+ minutes since last reminded).
+    Also updates last_reminded_at for returned tasks so the clock resets.
+    """
+    tasks_needing_reminder = [
+        task for task in Task.objects.filter(user=request.user, complete=False)
+        if task.needs_reminder()
+    ]
+
+    data = []
+    for task in tasks_needing_reminder:
+        data.append({
+            'id': task.id,
+            'content': task.content,
+            'due_date': str(task.due_date) if task.due_date else None,
+            'due_time': str(task.due_time) if task.due_time else None,
+        })
+        # Update last_reminded_at so the 6-min window resets
+        task.last_reminded_at = timezone.now()
+        task.save(update_fields=['last_reminded_at'])
+
+    return JsonResponse({'reminders': data})

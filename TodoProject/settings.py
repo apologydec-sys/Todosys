@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-from django.urls import path
 import os
 import dj_database_url
 from decouple import config
@@ -133,5 +132,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = []
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

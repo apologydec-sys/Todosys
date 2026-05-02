@@ -1,66 +1,126 @@
- {% extends "partials/base.html" %}
- {% block title %}My Todos - TodosApp{% endblock %}
+{% extends "partials/base.html" %}
+{% block title %}My Todos - TodosApp{% endblock %}
 {% load crispy_forms_tags %}
-    {% block content %}
-     <div class="container-fluid mt-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10 col-sm-12">
-                <div class="card shadow-lg">
-                    <div class="card-header bg-primary text-white text-center">
-                        <h3 class="card-title mb-0">My Todo List</h3>
-                        <p class="mb-0">Welcome, {{ user.username }}! <a href="{% url 'logout' %}" class="btn btn-light btn-sm ml-2">Logout</a></p>
-                    </div>
-                    <div class="card-body">
-                        <form method="POST" class="mb-4">
-                          {% csrf_token %}
-                          {{ form|crispy }}
-                            <button class="btn btn-success btn-block" type="submit">Add Task</button>
-                        </form>
-                        <hr>
-                        <div class="row mb-3 text-center">
-                            <div class="col-sm-4">
-                                <div class="bg-light p-2 rounded">
-                                    <strong>Total Tasks: {{ count_todos }}</strong>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="bg-success text-white p-2 rounded">
-                                    <strong>Completed: {{ count_completed_todos }}</strong>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="bg-warning p-2 rounded">
-                                    <strong>Pending: {{ count_uncompleted_todos }}</strong>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            {% for todo in todos %}
-                            <div class="col-md-6 col-sm-12 mb-3">
-                                <div class="card border-0 shadow-sm h-100">
-                                    <div class="card-body">
-                                        <small class="text-muted">Created: {{ todo.date|date:"M d, Y H:i" }}</small>
-                                        <h5 class="{% if todo.complete %}text-decoration-line-through text-muted{% endif %}">{{ todo.content }}</h5>
-                                        {% if todo.due_date %}
-                                        <p class="mb-2"><i class="fas fa-calendar-alt"></i> Due: {{ todo.due_date }} at {{ todo.due_time }}</p>
-                                        {% endif %}
-                                        <div class="d-flex justify-content-between">
-                                            <a class="btn btn-info btn-sm" href="{% url 'todo-update' todo.id %}">Edit</a>
-                                            <a class="btn btn-danger btn-sm" href="{% url 'todo-delete' todo.id %}">Delete</a>
-                                            {% if todo.complete %}
-                                            <span class="badge badge-success">Completed</span>
-                                            {% else %}
-                                            <span class="badge badge-warning">Pending</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+{% block content %}
+<div class="container-fluid mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+
+      <!-- Overdue / due-today banner -->
+      {% with overdue_tasks=todos %}
+      {% endwith %}
+
+      <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="card-title mb-0">My Todo List</h3>
+          <p class="mb-0">
+            Welcome, {{ user.username }}!
+            <a href="{% url 'logout' %}" class="btn btn-light btn-sm ml-2">Logout</a>
+          </p>
         </div>
-     </div>
-     {% endblock %}
+
+        <div class="card-body">
+
+          <!-- Add task form -->
+          <form method="POST" class="mb-4">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button class="btn btn-success btn-block" type="submit">
+              <i class="fas fa-plus"></i> Add Task
+            </button>
+          </form>
+
+          <hr>
+
+          <!-- Stats row -->
+          <div class="row mb-3 text-center">
+            <div class="col-sm-4">
+              <div class="bg-light p-2 rounded">
+                <strong>Total: {{ count_todos }}</strong>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="bg-success text-white p-2 rounded">
+                <strong>Completed: {{ count_completed_todos }}</strong>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="bg-warning p-2 rounded">
+                <strong>Pending: {{ count_uncompleted_todos }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reminder info banner (shown when there are pending tasks) -->
+          {% if count_uncompleted_todos > 0 %}
+          <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="fas fa-bell mr-2"></i>
+            <span>
+              You have <strong>{{ count_uncompleted_todos }}</strong> pending task{{ count_uncompleted_todos|pluralize }}.
+              You'll receive a reminder every <strong>6 minutes</strong> until they're done.
+            </span>
+          </div>
+          {% endif %}
+
+          <!-- Task cards -->
+          <div class="row">
+            {% for todo in todos %}
+            <div class="col-md-6 col-sm-12 mb-3">
+              <div class="card border-0 shadow-sm h-100 {% if todo.complete %}border-success{% else %}border-warning{% endif %}"
+                   style="border-left: 4px solid {% if todo.complete %}#28a745{% else %}#ffc107{% endif %} !important;">
+                <div class="card-body">
+                  <small class="text-muted">
+                    <i class="fas fa-clock"></i> Created: {{ todo.date|date:"M d, Y H:i" }}
+                  </small>
+                  <h5 class="mt-1 {% if todo.complete %}text-decoration-line-through text-muted{% endif %}">
+                    {{ todo.content }}
+                  </h5>
+
+                  {% if todo.due_date %}
+                  <p class="mb-2 small">
+                    <i class="fas fa-calendar-alt text-danger"></i>
+                    Due: <strong>{{ todo.due_date }}</strong>
+                    {% if todo.due_time %}at {{ todo.due_time }}{% endif %}
+                  </p>
+                  {% endif %}
+
+                  {% if todo.last_reminded_at %}
+                  <p class="mb-2 small text-muted">
+                    <i class="fas fa-bell"></i> Last reminded: {{ todo.last_reminded_at|date:"M d, H:i" }}
+                  </p>
+                  {% endif %}
+
+                  <div class="d-flex justify-content-between align-items-center mt-2">
+                    <a class="btn btn-info btn-sm" href="{% url 'todo-update' todo.id %}">
+                      <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a class="btn btn-danger btn-sm" href="{% url 'todo-delete' todo.id %}">
+                      <i class="fas fa-trash"></i> Delete
+                    </a>
+                    {% if todo.complete %}
+                    <span class="badge badge-success"><i class="fas fa-check"></i> Done</span>
+                    {% else %}
+                    <span class="badge badge-warning"><i class="fas fa-hourglass-half"></i> Pending</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+              <div class="alert alert-secondary text-center">
+                <i class="fas fa-clipboard-list fa-2x mb-2"></i>
+                <p class="mb-0">No tasks yet. Add one above!</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+        </div><!-- /card-body -->
+      </div><!-- /card -->
+
+    </div>
+  </div>
+</div>
+{% endblock %}

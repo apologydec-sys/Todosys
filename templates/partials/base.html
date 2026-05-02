@@ -11,23 +11,181 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>
     <title>{% block title %}{% endblock %}</title>
+
+    <style>
+      /* Reminder toast container */
+      #reminder-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        max-width: 360px;
+      }
+      .reminder-toast {
+        background: #fff;
+        border-left: 5px solid #f39c12;
+        border-radius: 6px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+        padding: 14px 18px;
+        margin-top: 10px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        animation: slideIn 0.4s ease;
+      }
+      .reminder-toast .toast-icon {
+        font-size: 1.4rem;
+        color: #f39c12;
+        margin-top: 2px;
+      }
+      .reminder-toast .toast-body {
+        flex: 1;
+      }
+      .reminder-toast .toast-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #333;
+        margin-bottom: 2px;
+      }
+      .reminder-toast .toast-text {
+        font-size: 0.85rem;
+        color: #555;
+      }
+      .reminder-toast .toast-close {
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        color: #aaa;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+      }
+      .reminder-toast .toast-close:hover { color: #333; }
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateX(60px); }
+        to   { opacity: 1; transform: translateX(0); }
+      }
+    </style>
   </head>
   <body>
     {% include 'partials/nav.html' %}
 
     {% block content %}{% endblock %}
 
-    <!-- Optional JavaScript; choose one of the two! -->
+    <!-- Reminder toast container -->
+    <div id="reminder-container" aria-live="polite" aria-label="Task reminders"></div>
 
-    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <!-- jQuery and Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
 
-    <!-- Option 2: Separate Popper and Bootstrap JS -->
-    <!--
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
-    -->
+    {% if user.is_authenticated %}
+    <script>
+      // ── Reminder System ──────────────────────────────────────────────
+      const REMINDER_INTERVAL_MS = 6 * 60 * 1000; // 6 minutes
+      const REMINDER_API_URL = "/api/reminders/";
+      const TOAST_AUTO_DISMISS_MS = 12000; // toast stays 12 seconds
+
+      // Request browser notification permission on first load
+      function requestNotificationPermission() {
+        if ("Notification" in window && Notification.permission === "default") {
+          Notification.requestPermission();
+        }
+      }
+
+      // Show a browser (OS-level) notification
+      function showBrowserNotification(title, body) {
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification(title, {
+            body: body,
+            icon: "https://cdn-icons-png.flaticon.com/512/1827/1827312.png",
+          });
+        }
+      }
+
+      // Show an on-screen toast card
+      function showToast(task) {
+        const container = document.getElementById("reminder-container");
+        const toastId = "toast-" + task.id + "-" + Date.now();
+
+        let dueInfo = "";
+        if (task.due_date) {
+          dueInfo = `<span class="badge badge-warning ml-1">Due: ${task.due_date}${task.due_time ? " " + task.due_time : ""}</span>`;
+        }
+
+        const toast = document.createElement("div");
+        toast.className = "reminder-toast";
+        toast.setAttribute("role", "alert");
+        toast.id = toastId;
+        toast.innerHTML = `
+          <span class="toast-icon"><i class="fas fa-bell"></i></span>
+          <div class="toast-body">
+            <div class="toast-title">⏰ Task Reminder</div>
+            <div class="toast-text">${escapeHtml(task.content)} ${dueInfo}</div>
+          </div>
+          <button class="toast-close" aria-label="Dismiss reminder" onclick="dismissToast('${toastId}')">&times;</button>
+        `;
+        container.appendChild(toast);
+
+        // Auto-dismiss after TOAST_AUTO_DISMISS_MS
+        setTimeout(() => dismissToast(toastId), TOAST_AUTO_DISMISS_MS);
+      }
+
+      function dismissToast(id) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.opacity = "0";
+          el.style.transition = "opacity 0.4s";
+          setTimeout(() => el && el.remove(), 400);
+        }
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.appendChild(document.createTextNode(text));
+        return div.innerHTML;
+      }
+
+      // Fetch reminders from the server and display them
+      function fetchAndShowReminders() {
+        fetch(REMINDER_API_URL, {
+          method: "GET",
+          headers: { "X-Requested-With": "XMLHttpRequest" },
+          credentials: "same-origin",
+        })
+          .then((res) => {
+            if (!res.ok) return;
+            return res.json();
+          })
+          .then((data) => {
+            if (!data || !data.reminders || data.reminders.length === 0) return;
+
+            data.reminders.forEach((task) => {
+              showToast(task);
+              showBrowserNotification(
+                "📝 TodosApp Reminder",
+                `Don't forget: ${task.content}`
+              );
+            });
+          })
+          .catch(() => {
+            // Silently ignore network errors (user may be offline)
+          });
+      }
+
+      // Kick off on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        requestNotificationPermission();
+
+        // First reminder fires immediately on page load (server decides if 6 min passed)
+        fetchAndShowReminders();
+
+        // Then repeat every 6 minutes
+        setInterval(fetchAndShowReminders, REMINDER_INTERVAL_MS);
+      });
+    </script>
+    {% endif %}
+
+    {% block extra_js %}{% endblock %}
   </body>
 </html>

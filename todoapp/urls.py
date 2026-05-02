@@ -5,9 +5,10 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('todos/', views.index, name='todo-index'),
     path('update/<int:pk>/', views.update, name='todo-update'),
-     path('delete/<int:pk>/', views.delete, name='todo-delete'),
-     path('register/', views.register, name='register'),
-     path('login/', views.login_view, name='login'),
-     path('logout/', views.logout_view, name='logout'),
+    path('delete/<int:pk>/', views.delete, name='todo-delete'),
+    path('register/', views.register, name='register'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('api/reminders/', views.reminders_api, name='reminders-api'),
 ]
 

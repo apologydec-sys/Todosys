@@ -26,9 +26,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-89blyhl024ktu77f*5nw(!(8yd%9fqz%@rwq&qgwfrzt=v7e#9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['https://todosys-1.onrender.com','todosys-1.onrender.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = [
+    'todosys-1.onrender.com',
+    'todoapp-129a.onrender.com',
+    '127.0.0.1',
+    'localhost',
+]
 
 
 # Application definition

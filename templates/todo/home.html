@@ -1,174 +1,254 @@
 {% extends "partials/base.html" %}
-{% block title %}Welcome to TodosApp{% endblock %}
+{% block title %}Welcome - Akanni Word Todo App System{% endblock %}
 {% load static %}
 {% block content %}
 <style>
-    nav.navbar {
-        background: rgba(0,0,0,0.1) !important;
-        backdrop-filter: blur(10px);
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1000;
+  /* ── Page background ─────────────────────────────────────────── */
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+  }
+
+  nav.navbar {
+    background: rgba(0, 0, 0, 0.15) !important;
+    backdrop-filter: blur(10px);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+
+  /* ── Hero wrapper ────────────────────────────────────────────── */
+  .hero-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 80px;
+    padding-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Floating background shapes ─────────────────────────────── */
+  .floating-shapes { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    animation: float 6s ease-in-out infinite;
+  }
+  .shape:nth-child(1) { width: 120px; height: 120px; top: 8%;  left: 5%;   animation-delay: 0s; }
+  .shape:nth-child(2) { width:  80px; height:  80px; top: 15%; right: 8%;  animation-delay: 2s; }
+  .shape:nth-child(3) { width: 140px; height: 140px; bottom: 15%; left: 15%; animation-delay: 4s; }
+  .shape:nth-child(4) { width:  90px; height:  90px; bottom: 8%;  right: 15%; animation-delay: 1s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-18px); }
+  }
+
+  /* ── Two-column layout ───────────────────────────────────────── */
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── Left: text content ──────────────────────────────────────── */
+  .hero-text {
+    flex: 1 1 0;
+    color: white;
+    animation: fadeInLeft 0.9s ease-out both;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    backdrop-filter: blur(6px);
+  }
+  .hero-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+  .hero-title span {
+    background: linear-gradient(90deg, #ffd700, #ffaa00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.88;
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+  .hero-buttons { display: flex; flex-wrap: wrap; gap: 14px; }
+  .btn-hero {
+    padding: 13px 32px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.25s, box-shadow 0.25s;
+    display: inline-block;
+  }
+  .btn-hero:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.25); text-decoration: none; }
+  .btn-start { background: linear-gradient(45deg, #ff6b6b, #ee5a24); color: white; }
+  .btn-login { background: linear-gradient(45deg, #4ecdc4, #44a08d); color: white; }
+
+  /* ── Feature pills ───────────────────────────────────────────── */
+  .feature-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+  .pill {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: 0.82rem;
+    color: white;
+    backdrop-filter: blur(4px);
+  }
+
+  /* ── Right: photo ────────────────────────────────────────────── */
+  .hero-photo-wrap {
+    flex: 0 0 340px;
+    display: flex;
+    justify-content: center;
+    animation: fadeInRight 0.9s ease-out 0.2s both;
+  }
+  .photo-frame {
+    position: relative;
+    width: 300px;
+    height: 380px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.35), 0 0 0 4px rgba(255,255,255,0.2);
+  }
+  /* Crop to waist-up: show top 65% of the image */
+  .photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;   /* anchors to the top = head & shoulders */
+    display: block;
+    transform: scale(1.08);        /* slight zoom so waist fills the frame */
+    transform-origin: top center;
+  }
+  /* Subtle gradient fade at the bottom of the photo */
+  .photo-frame::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 80px;
+    background: linear-gradient(to top, rgba(102,126,234,0.55), transparent);
+    border-radius: 0 0 24px 24px;
+  }
+  /* Decorative ring behind the photo */
+  .photo-ring {
+    position: absolute;
+    inset: -12px;
+    border-radius: 32px;
+    border: 2px dashed rgba(255,255,255,0.25);
+    animation: spin 18s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Animations ──────────────────────────────────────────────── */
+  @keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-40px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ── Responsive ──────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .hero-inner {
+      flex-direction: column-reverse;
+      text-align: center;
+      gap: 30px;
     }
-    body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        font-family: 'Arial', sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-    .hero-section {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: white;
-        padding-top: 80px; /* Account for fixed nav */
-    }
-    .hero-title {
-        font-size: 4rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
-        animation: fadeInUp 1s ease-out;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-    .hero-subtitle {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
-        animation: fadeInUp 1.2s ease-out;
-        opacity: 0.9;
-    }
-    .btn-custom {
-        padding: 15px 30px;
-        font-size: 1.2rem;
-        border-radius: 50px;
-        margin: 0 10px;
-        transition: all 0.3s ease;
-        border: none;
-        text-transform: uppercase;
-        font-weight: bold;
-        animation: fadeInUp 1.5s ease-out;
-    }
-    .btn-custom:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    }
-    .btn-primary-custom {
-        background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-    }
-    .btn-secondary-custom {
-        background: linear-gradient(45deg, #4ecdc4, #44a08d);
-    }
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    .floating-shapes {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        z-index: -1;
-    }
-    .shape {
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.1);
-        animation: float 6s ease-in-out infinite;
-    }
-    .shape:nth-child(1) {
-        width: 80px;
-        height: 80px;
-        top: 10%;
-        left: 10%;
-        animation-delay: 0s;
-    }
-    .shape:nth-child(2) {
-        width: 60px;
-        height: 60px;
-        top: 20%;
-        right: 10%;
-        animation-delay: 2s;
-    }
-    .shape:nth-child(3) {
-        width: 100px;
-        height: 100px;
-        bottom: 20%;
-        left: 20%;
-        animation-delay: 4s;
-    }
-    .shape:nth-child(4) {
-        width: 70px;
-        height: 70px;
-        bottom: 10%;
-        right: 20%;
-        animation-delay: 1s;
-    }
-    @keyframes float {
-        0%, 100% {
-            transform: translateY(0px);
-        }
-        50% {
-            transform: translateY(-20px);
-        }
-    }
-    @media (max-width: 768px) {
-        .hero-title {
-            font-size: 2.5rem;
-        }
-        .hero-subtitle {
-            font-size: 1.2rem;
-        }
-        .btn-custom {
-            padding: 12px 24px;
-            font-size: 1rem;
-            margin: 5px;
-            display: block;
-            width: 200px;
-            margin: 10px auto;
-        }
-    }
+    .hero-title { font-size: 2rem; }
+    .hero-buttons { justify-content: center; }
+    .feature-pills { justify-content: center; }
+    .hero-photo-wrap { flex: none; }
+    .photo-frame { width: 220px; height: 280px; }
+  }
 </style>
 
-<div class="hero-section">
-    <div class="floating-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
-    <div class="container">
-        <h1 class="hero-title">Welcome to TodosApp</h1>
-        <p class="hero-subtitle">Organize your tasks efficiently with our modern todo application</p>
-        <div>
-            <a href="{% url 'register' %}" class="btn btn-custom btn-primary-custom">Get Started</a>
-            <a href="{% url 'login' %}" class="btn btn-custom btn-secondary-custom">Login</a>
-        </div>
-    </div>
-</div>
+<section class="hero-section" aria-label="Welcome">
+  <!-- Background shapes -->
+  <div class="floating-shapes" aria-hidden="true">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
 
-<script>
-    // Add some interactive effects
-    document.addEventListener('DOMContentLoaded', function() {
-        const shapes = document.querySelectorAll('.shape');
-        shapes.forEach(shape => {
-            shape.addEventListener('mouseover', function() {
-                this.style.transform = 'scale(1.2)';
-            });
-            shape.addEventListener('mouseout', function() {
-                this.style.transform = 'scale(1)';
-            });
-        });
-    });
-</script>
+  <div class="hero-inner">
+
+    <!-- ── Left: text ── -->
+    <div class="hero-text">
+      <div class="hero-badge">✅ Task Management System</div>
+
+      <h1 class="hero-title">
+        Welcome to<br>
+        <span>Akanni Word</span><br>
+        Todo App System
+      </h1>
+
+      <p class="hero-subtitle">
+        Stay on top of every task with smart 6-minute reminders,
+        due dates, and a clean dashboard — built to keep you productive every day.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="{% url 'register' %}" class="btn-hero btn-start">🚀 Get Started</a>
+        <a href="{% url 'login' %}"    class="btn-hero btn-login">🔑 Login</a>
+      </div>
+
+      <div class="feature-pills">
+        <span class="pill">⏰ 6-Min Reminders</span>
+        <span class="pill">📱 Installable PWA</span>
+        <span class="pill">🔔 Push Notifications</span>
+        <span class="pill">📋 Task Tracking</span>
+      </div>
+    </div>
+
+    <!-- ── Right: photo (waist to head) ── -->
+    <div class="hero-photo-wrap" aria-hidden="true">
+      <div style="position:relative;">
+        <div class="photo-ring"></div>
+        <div class="photo-frame">
+          <img src="{% static 'images/akanni.png' %}"
+               alt="Akanni"
+               loading="eager">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
 {% endblock %}

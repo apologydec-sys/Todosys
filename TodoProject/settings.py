@@ -33,6 +33,13 @@ ALLOWED_HOSTS = [
     'todoapp-129a.onrender.com',
     '127.0.0.1',
     'localhost',
+    '.onrender.com',   # catch-all for any Render subdomain
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://todosys-1.onrender.com',
+    'https://todoapp-129a.onrender.com',
+    'https://*.onrender.com',   # catch-all for HTTPS on Render
 ]
 
 
@@ -140,13 +147,13 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Whitenoise: serve compressed static files
+# Whitenoise: serve compressed static files (no manifest to avoid stale-hash 400s)
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 

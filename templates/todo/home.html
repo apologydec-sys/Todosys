@@ -3,225 +3,288 @@
 {% load static %}
 {% block content %}
 <style>
-  /* ── Page background ─────────────────────────────────────────── */
+  /* ══════════════════════════════════════════════════════════════
+     PAGE BASE
+  ══════════════════════════════════════════════════════════════ */
   body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
     font-family: 'Arial', sans-serif;
   }
-
   nav.navbar {
-    background: rgba(0, 0, 0, 0.15) !important;
+    background: rgba(0,0,0,0.15) !important;
     backdrop-filter: blur(10px);
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
+    position: fixed; top: 0; width: 100%; z-index: 1000;
   }
 
-  /* ── Hero wrapper ────────────────────────────────────────────── */
+  /* ══════════════════════════════════════════════════════════════
+     HERO SECTION
+  ══════════════════════════════════════════════════════════════ */
   .hero-section {
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    padding-top: 80px;
-    padding-bottom: 40px;
-    position: relative;
-    overflow: hidden;
+    display: flex; align-items: center;
+    padding-top: 80px; padding-bottom: 40px;
+    position: relative; overflow: hidden;
   }
 
-  /* ── Floating background shapes ─────────────────────────────── */
+  /* floating bg shapes */
   .floating-shapes { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
   .shape {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
-    animation: float 6s ease-in-out infinite;
+    position: absolute; border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    animation: floatBubble 7s ease-in-out infinite;
   }
-  .shape:nth-child(1) { width: 120px; height: 120px; top: 8%;  left: 5%;   animation-delay: 0s; }
-  .shape:nth-child(2) { width:  80px; height:  80px; top: 15%; right: 8%;  animation-delay: 2s; }
-  .shape:nth-child(3) { width: 140px; height: 140px; bottom: 15%; left: 15%; animation-delay: 4s; }
-  .shape:nth-child(4) { width:  90px; height:  90px; bottom: 8%;  right: 15%; animation-delay: 1s; }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50%       { transform: translateY(-18px); }
+  .shape:nth-child(1){ width:130px;height:130px;top:8%;left:4%;   animation-delay:0s; }
+  .shape:nth-child(2){ width: 80px;height: 80px;top:18%;right:6%; animation-delay:2s; }
+  .shape:nth-child(3){ width:160px;height:160px;bottom:14%;left:12%;animation-delay:4s;}
+  .shape:nth-child(4){ width: 90px;height: 90px;bottom:8%;right:14%;animation-delay:1s;}
+  @keyframes floatBubble{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-20px);}
   }
 
-  /* ── Two-column layout ───────────────────────────────────────── */
+  /* two-column inner */
   .hero-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 40px;
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 24px;
+    position: relative; z-index: 1;
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 48px;
+    width: 100%; max-width: 1140px;
+    margin: 0 auto; padding: 0 28px;
   }
 
-  /* ── Left: text content ──────────────────────────────────────── */
+  /* ── LEFT TEXT ── */
   .hero-text {
-    flex: 1 1 0;
-    color: white;
+    flex: 1 1 0; color: white;
     animation: fadeInLeft 0.9s ease-out both;
   }
   .hero-badge {
     display: inline-block;
     background: rgba(255,255,255,0.18);
     border: 1px solid rgba(255,255,255,0.35);
-    border-radius: 50px;
-    padding: 6px 18px;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 18px;
+    border-radius: 50px; padding: 6px 20px;
+    font-size: 0.82rem; letter-spacing: 1.2px;
+    text-transform: uppercase; margin-bottom: 20px;
     backdrop-filter: blur(6px);
   }
   .hero-title {
-    font-size: 2.8rem;
-    font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 16px;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    font-size: 2.9rem; font-weight: 800;
+    line-height: 1.18; margin-bottom: 18px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.28);
   }
-  .hero-title span {
-    background: linear-gradient(90deg, #ffd700, #ffaa00);
+  .hero-title .gold {
+    background: linear-gradient(90deg,#ffd700,#ffaa00);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .hero-subtitle {
-    font-size: 1.1rem;
-    opacity: 0.88;
-    margin-bottom: 32px;
-    line-height: 1.6;
+    font-size: 1.08rem; opacity: 0.88;
+    margin-bottom: 32px; line-height: 1.65;
   }
   .hero-buttons { display: flex; flex-wrap: wrap; gap: 14px; }
   .btn-hero {
-    padding: 13px 32px;
-    font-size: 1rem;
-    font-weight: 700;
-    border-radius: 50px;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
+    padding: 13px 34px; font-size: 1rem; font-weight: 700;
+    border-radius: 50px; border: none; cursor: pointer;
+    text-decoration: none; display: inline-block;
     transition: transform 0.25s, box-shadow 0.25s;
-    display: inline-block;
   }
-  .btn-hero:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.25); text-decoration: none; }
-  .btn-start { background: linear-gradient(45deg, #ff6b6b, #ee5a24); color: white; }
-  .btn-login { background: linear-gradient(45deg, #4ecdc4, #44a08d); color: white; }
+  .btn-hero:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.28);
+    text-decoration: none;
+  }
+  .btn-start{ background: linear-gradient(45deg,#ff6b6b,#ee5a24); color:#fff; }
+  .btn-login{ background: linear-gradient(45deg,#4ecdc4,#44a08d); color:#fff; }
 
-  /* ── Feature pills ───────────────────────────────────────────── */
-  .feature-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
-  .pill {
-    background: rgba(255,255,255,0.15);
+  .feature-pills{ display:flex; flex-wrap:wrap; gap:10px; margin-top:28px; }
+  .pill{
+    background: rgba(255,255,255,0.14);
     border: 1px solid rgba(255,255,255,0.25);
-    border-radius: 50px;
-    padding: 6px 16px;
-    font-size: 0.82rem;
-    color: white;
+    border-radius: 50px; padding: 6px 16px;
+    font-size: 0.8rem; color: white;
     backdrop-filter: blur(4px);
   }
 
-  /* ── Right: photo ────────────────────────────────────────────── */
-  .hero-photo-wrap {
-    flex: 0 0 340px;
-    display: flex;
-    justify-content: center;
+  /* ══════════════════════════════════════════════════════════════
+     SLIDESHOW FRAME  (right side)
+  ══════════════════════════════════════════════════════════════ */
+  .hero-slide-wrap {
+    flex: 0 0 360px;
     animation: fadeInRight 0.9s ease-out 0.2s both;
   }
-  .photo-frame {
+
+  /* outer decorative ring */
+  .slide-ring-outer {
     position: relative;
-    width: 300px;
-    height: 380px;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 24px 60px rgba(0,0,0,0.35), 0 0 0 4px rgba(255,255,255,0.2);
+    width: 340px; height: 420px;
   }
-  /* Crop to waist-up: show top 65% of the image */
-  .photo-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;   /* anchors to the top = head & shoulders */
-    display: block;
-    transform: scale(1.08);        /* slight zoom so waist fills the frame */
-    transform-origin: top center;
-  }
-  /* Subtle gradient fade at the bottom of the photo */
-  .photo-frame::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 80px;
-    background: linear-gradient(to top, rgba(102,126,234,0.55), transparent);
-    border-radius: 0 0 24px 24px;
-  }
-  /* Decorative ring behind the photo */
-  .photo-ring {
-    position: absolute;
-    inset: -12px;
-    border-radius: 32px;
-    border: 2px dashed rgba(255,255,255,0.25);
-    animation: spin 18s linear infinite;
+  .slide-ring {
+    position: absolute; inset: -14px;
+    border-radius: 36px;
+    border: 2px dashed rgba(255,255,255,0.22);
+    animation: spinRing 20s linear infinite;
     pointer-events: none;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes spinRing{ to{ transform:rotate(360deg); } }
 
-  /* ── Animations ──────────────────────────────────────────────── */
-  @keyframes fadeInLeft {
-    from { opacity: 0; transform: translateX(-40px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes fadeInRight {
-    from { opacity: 0; transform: translateX(40px); }
-    to   { opacity: 1; transform: translateX(0); }
+  /* the actual slideshow container */
+  .slideshow {
+    position: relative;
+    width: 340px; height: 420px;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow:
+      0 28px 64px rgba(0,0,0,0.40),
+      0 0 0 4px rgba(255,255,255,0.18);
   }
 
-  /* ── Responsive ──────────────────────────────────────────────── */
-  @media (max-width: 768px) {
-    .hero-inner {
-      flex-direction: column-reverse;
-      text-align: center;
-      gap: 30px;
-    }
-    .hero-title { font-size: 2rem; }
-    .hero-buttons { justify-content: center; }
-    .feature-pills { justify-content: center; }
-    .hero-photo-wrap { flex: none; }
-    .photo-frame { width: 220px; height: 280px; }
+  /* each slide */
+  .slide {
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 1.2s cubic-bezier(0.4,0,0.2,1);
+    will-change: opacity, transform;
+  }
+  .slide.active { opacity: 1; z-index: 2; }
+  .slide.prev   { opacity: 0; z-index: 1; }
+
+  /* Ken Burns zoom on active slide */
+  .slide img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    transform: scale(1.0);
+    transition: transform 6s ease-in-out;
+  }
+  .slide.active img { transform: scale(1.08); }
+
+  /* bottom gradient overlay on each slide */
+  .slide::after {
+    content: '';
+    position: absolute; bottom:0; left:0; right:0; height:110px;
+    background: linear-gradient(to top, rgba(80,40,140,0.65), transparent);
+    border-radius: 0 0 28px 28px;
+    z-index: 3;
+  }
+
+  /* slide caption */
+  .slide-caption {
+    position: absolute; bottom: 18px; left: 18px; right: 18px;
+    z-index: 4; color: white;
+    font-size: 0.82rem; font-weight: 600;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s 0.8s ease, transform 0.6s 0.8s ease;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+  .slide.active .slide-caption {
+    opacity: 1; transform: translateY(0);
+  }
+
+  /* dot indicators */
+  .slide-dots {
+    position: absolute; bottom: -28px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 5;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    border: none; padding: 0;
+  }
+  .dot.active {
+    background: #ffd700;
+    transform: scale(1.35);
+  }
+
+  /* prev / next arrows */
+  .slide-arrow {
+    position: absolute; top: 50%; z-index: 6;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    backdrop-filter: blur(6px);
+    color: white; font-size: 1.1rem;
+    width: 36px; height: 36px;
+    border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.25s, transform 0.25s;
+    padding: 0;
+  }
+  .slide-arrow:hover {
+    background: rgba(255,255,255,0.32);
+    transform: translateY(-50%) scale(1.1);
+  }
+  .slide-arrow.prev-arrow { left: 10px; }
+  .slide-arrow.next-arrow { right: 10px; }
+
+  /* progress bar */
+  .slide-progress {
+    position: absolute; bottom: 0; left: 0;
+    height: 3px; width: 0%;
+    background: linear-gradient(90deg, #ffd700, #ffaa00);
+    z-index: 7;
+    border-radius: 0 0 28px 28px;
+    transition: width linear;
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     ANIMATIONS
+  ══════════════════════════════════════════════════════════════ */
+  @keyframes fadeInLeft{
+    from{opacity:0;transform:translateX(-44px);}
+    to{opacity:1;transform:translateX(0);}
+  }
+  @keyframes fadeInRight{
+    from{opacity:0;transform:translateX(44px);}
+    to{opacity:1;transform:translateX(0);}
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════════════════════════════════════ */
+  @media(max-width:900px){
+    .hero-inner{ flex-direction:column-reverse; text-align:center; gap:36px; }
+    .hero-title{ font-size:2.1rem; }
+    .hero-buttons{ justify-content:center; }
+    .feature-pills{ justify-content:center; }
+    .hero-slide-wrap{ flex:none; }
+    .slide-ring-outer,.slideshow{ width:260px; height:320px; }
+  }
+  @media(max-width:480px){
+    .hero-title{ font-size:1.75rem; }
+    .slide-ring-outer,.slideshow{ width:220px; height:270px; }
   }
 </style>
 
-<section class="hero-section" aria-label="Welcome">
-  <!-- Background shapes -->
+<section class="hero-section" aria-label="Welcome to Akanni Word Todo App System">
+
+  <!-- bg bubbles -->
   <div class="floating-shapes" aria-hidden="true">
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
+    <div class="shape"></div><div class="shape"></div>
+    <div class="shape"></div><div class="shape"></div>
   </div>
 
   <div class="hero-inner">
 
-    <!-- ── Left: text ── -->
+    <!-- ══ LEFT: text ══ -->
     <div class="hero-text">
       <div class="hero-badge">✅ Task Management System</div>
 
       <h1 class="hero-title">
         Welcome to<br>
-        <span>Akanni Word</span><br>
+        <span class="gold">Akanni Word</span><br>
         Todo App System
       </h1>
 
       <p class="hero-subtitle">
         Stay on top of every task with smart 6-minute reminders,
-        due dates, and a clean dashboard — built to keep you productive every day.
+        due dates, and a clean dashboard — built to keep you
+        productive every single day.
       </p>
 
       <div class="hero-buttons">
@@ -232,23 +295,154 @@
       <div class="feature-pills">
         <span class="pill">⏰ 6-Min Reminders</span>
         <span class="pill">📱 Installable PWA</span>
-        <span class="pill">🔔 Push Notifications</span>
+        <span class="pill">🔔 Notifications</span>
         <span class="pill">📋 Task Tracking</span>
       </div>
     </div>
 
-    <!-- ── Right: photo (waist to head) ── -->
-    <div class="hero-photo-wrap" aria-hidden="true">
-      <div style="position:relative;">
-        <div class="photo-ring"></div>
-        <div class="photo-frame">
-          <img src="{% static 'images/akanni.png' %}"
-               alt="Akanni"
-               loading="eager">
+    <!-- ══ RIGHT: slideshow ══ -->
+    <div class="hero-slide-wrap" aria-label="Image slideshow">
+      <div class="slide-ring-outer">
+        <div class="slide-ring" aria-hidden="true"></div>
+
+        <div class="slideshow" id="heroSlideshow" role="region" aria-label="Feature images">
+
+          <!-- Slide 1 — your photo -->
+          <div class="slide active" role="img" aria-label="Akanni">
+            <img src="{% static 'images/akanni.png' %}" alt="Akanni" loading="eager">
+            <div class="slide-caption">👤 Akanni — Creator</div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="slide" role="img" aria-label="Feature image 1">
+            <img src="{% static 'images/slide1.png' %}" alt="TodosApp feature" loading="lazy">
+            <div class="slide-caption">📋 Organise your tasks</div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="slide" role="img" aria-label="Feature image 2">
+            <img src="{% static 'images/slide2.png' %}" alt="TodosApp reminders" loading="lazy">
+            <div class="slide-caption">⏰ Never miss a deadline</div>
+          </div>
+
+          <!-- arrows -->
+          <button class="slide-arrow prev-arrow" id="slidePrev" aria-label="Previous slide">&#8249;</button>
+          <button class="slide-arrow next-arrow" id="slideNext" aria-label="Next slide">&#8250;</button>
+
+          <!-- progress bar -->
+          <div class="slide-progress" id="slideProgress"></div>
+        </div>
+
+        <!-- dots (outside the overflow:hidden box) -->
+        <div class="slide-dots" id="slideDots" role="tablist" aria-label="Slide indicators">
+          <button class="dot active" role="tab" aria-selected="true"  aria-label="Slide 1"></button>
+          <button class="dot"        role="tab" aria-selected="false" aria-label="Slide 2"></button>
+          <button class="dot"        role="tab" aria-selected="false" aria-label="Slide 3"></button>
         </div>
       </div>
     </div>
 
   </div>
 </section>
+
+{% block extra_js %}
+<script>
+(function () {
+  'use strict';
+
+  const INTERVAL   = 5000;   // ms between auto-advances
+  const slides     = Array.from(document.querySelectorAll('#heroSlideshow .slide'));
+  const dots       = Array.from(document.querySelectorAll('#slideDots .dot'));
+  const progress   = document.getElementById('slideProgress');
+  const prevBtn    = document.getElementById('slidePrev');
+  const nextBtn    = document.getElementById('slideNext');
+  let   current    = 0;
+  let   timer      = null;
+  let   progTimer  = null;
+
+  function goTo(index) {
+    // wrap around
+    index = ((index % slides.length) + slides.length) % slides.length;
+
+    // mark old slide as prev (for z-index layering during fade)
+    slides[current].classList.remove('active');
+    slides[current].classList.add('prev');
+    dots[current].classList.remove('active');
+    dots[current].setAttribute('aria-selected', 'false');
+
+    // small delay then remove prev class
+    const oldIndex = current;
+    setTimeout(function () {
+      slides[oldIndex].classList.remove('prev');
+    }, 1300);
+
+    current = index;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+    dots[current].setAttribute('aria-selected', 'true');
+
+    resetProgress();
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  /* ── progress bar ── */
+  function resetProgress() {
+    clearInterval(progTimer);
+    progress.style.transition = 'none';
+    progress.style.width = '0%';
+
+    // force reflow so transition resets
+    void progress.offsetWidth;
+
+    progress.style.transition = 'width ' + INTERVAL + 'ms linear';
+    progress.style.width = '100%';
+  }
+
+  /* ── auto-play ── */
+  function startAuto() {
+    clearInterval(timer);
+    timer = setInterval(next, INTERVAL);
+  }
+  function stopAuto() { clearInterval(timer); }
+
+  /* ── event listeners ── */
+  nextBtn.addEventListener('click', function () {
+    next(); stopAuto(); startAuto();
+  });
+  prevBtn.addEventListener('click', function () {
+    prev(); stopAuto(); startAuto();
+  });
+
+  dots.forEach(function (dot, i) {
+    dot.addEventListener('click', function () {
+      goTo(i); stopAuto(); startAuto();
+    });
+  });
+
+  /* pause on hover */
+  var ss = document.getElementById('heroSlideshow');
+  ss.addEventListener('mouseenter', stopAuto);
+  ss.addEventListener('mouseleave', startAuto);
+
+  /* touch swipe support */
+  var touchStartX = 0;
+  ss.addEventListener('touchstart', function (e) {
+    touchStartX = e.changedTouches[0].clientX;
+  }, { passive: true });
+  ss.addEventListener('touchend', function (e) {
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) {
+      if (dx < 0) next(); else prev();
+      stopAuto(); startAuto();
+    }
+  }, { passive: true });
+
+  /* kick off */
+  resetProgress();
+  startAuto();
+})();
+</script>
+{% endblock %}
 {% endblock %}
